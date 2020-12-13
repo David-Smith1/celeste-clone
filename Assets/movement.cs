@@ -45,7 +45,7 @@ public class movement : MonoBehaviour
 
 
 
-        if (coll.onWall && !coll.onGround && !wallGrab)
+        if (coll.onWall && !coll.onGround && !wallGrab && rb.velocity.y <= 0)
         {
             WallSlide();
         }
@@ -66,13 +66,13 @@ public class movement : MonoBehaviour
     private void WallSlide()
     {
 
-        bool pushingWall = false;
         if ((rb.velocity.x > 0 && coll.onRightWall) || (rb.velocity.x < 0 && coll.onLeftWall))
         {
-            pushingWall = true;
+            rb.velocity = new Vector2(0, -slideSpeed);
         }
-        float push = pushingWall ? 0 : rb.velocity.x;
-
-        rb.velocity = new Vector2(push, -slideSpeed);
+        else
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y);
+        }
     }
 }
