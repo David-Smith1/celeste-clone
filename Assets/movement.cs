@@ -52,14 +52,21 @@ public class movement : MonoBehaviour
                 WallSlide();
             }
         }
-
-
+        
+// wallJump
+        if (Input.GetKeyDown(KeyCode.Space) && coll.onWall && !coll.onGround)
+        {
+            rb.velocity = new Vector2(wallJumpLerp, jumpForce);
+        }
+        
+// jump
         if (Input.GetKeyDown(KeyCode.Space))
         {
 
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.velocity += Vector2.up * jumpForce;
         }
+        
     }
 
     private void Walk(Vector2 dir)
