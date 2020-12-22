@@ -31,7 +31,8 @@ public class movement : MonoBehaviour
         Walk(dir);
 
         wallGrab = coll.onWall && Input.GetKey(KeyCode.LeftShift);
-
+        
+// wallGrab
         if (wallGrab)
         {
             rb.gravityScale = 0;
@@ -44,11 +45,14 @@ public class movement : MonoBehaviour
         }
 
 
-
-        if (coll.onWall && !coll.onGround && !wallGrab && rb.velocity.y <= 0)
+// trigger for wallSlide
+        if(coll.onWall && !coll.onGround)
         {
-            WallSlide();
+            if (x != 0 && !wallGrab)          
+                WallSlide();
+            }
         }
+
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -66,13 +70,13 @@ public class movement : MonoBehaviour
     private void WallSlide()
     {
 
-        if ((rb.velocity.x > 0 && coll.onRightWall) || (rb.velocity.x < 0 && coll.onLeftWall))
+        bool pushingWall = false;
+        if((rb.velocity.x > 0 && coll.onRightWall) || (rb.velocity.x < 0 && coll.onLeftWall))
         {
-            rb.velocity = new Vector2(0, -slideSpeed);
+            pushingWall = true;
         }
-        else
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y);
-        }
+        float push = pushingWall ? 0 : rb.velocity.x;
+        
+        rb.velocity = new Vector2(push, -slideSpeed);
     }
 }
