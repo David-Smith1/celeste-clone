@@ -13,6 +13,7 @@ public class movement : MonoBehaviour
 
     public bool wallGrab;
     public bool wallJumped;
+    public bool wallSlide;
 
     // Start is called before the first frame update
     void Start()
@@ -26,11 +27,21 @@ public class movement : MonoBehaviour
     {
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
+        float xRaw = Input.GetAxisRaw("Horizontal");
+        float yRaw = Input.GetAxisRaw("Vertical");
         Vector2 dir = new Vector2(x, y);
 
         Walk(dir);
 
-        wallGrab = coll.onWall && Input.GetKey(KeyCode.LeftShift);
+        if (coll.onWall && Input.GetKey(KeyCode.LeftShift))
+        {
+          wallGrab = true;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift || !coll.onWall)
+        {
+          wallGrab = false;
+          wallSlide = false;
+        }
         
 // wallGrab
         if (wallGrab)
@@ -38,6 +49,7 @@ public class movement : MonoBehaviour
             rb.gravityScale = 0;
             float speedModifier = y > -4.0 ? .5f : 1;
             rb.velocity = new Vector2(rb.velocity.x, y * (speed * speedModifier));
+            wallSlide = false;
         }
         else
         {
@@ -48,7 +60,9 @@ public class movement : MonoBehaviour
 // trigger for wallSlide
         if(coll.onWall && !coll.onGround)
         {
-            if (x != 0 && !wallGrab)          
+            if (x != 0 && !wallGrab) 
+            {
+                wallSlide = true;
                 WallSlide();
             }
         }
@@ -62,9 +76,12 @@ public class movement : MonoBehaviour
 // jump
         if (Input.GetKeyDown(KeyCode.Space))
         {
-
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.velocity += Vector2.up * jumpForce;
+            if (coll.onGround)
+              rb.velocity = new Vector2(rb.velocity.x, 0);
+              rb.velocity += Vector2.up * jumpForce;
+            
+            if (coll.onWall && !coll.onGround)
+              WallJump();
         }
         
     }
@@ -76,7 +93,7 @@ public class movement : MonoBehaviour
 
     private void WallSlide()
     {
-
+    
         bool pushingWall = false;
         if((rb.velocity.x > 0 && coll.onRightWall) || (rb.velocity.x < 0 && coll.onLeftWall))
         {
@@ -85,5 +102,17 @@ public class movement : MonoBehaviour
         float push = pushingWall ? 0 : rb.velocity.x;
         
         rb.velocity = new Vector2(push, -slideSpeed);
+    }
+    
+    private void WallJump()
+    {
+      
+       Vector2 wallJumpAngle = coll.onRightWall ? Vector2.left : Vector2.right;
+       
+    
+    
+    
+    
+    
     }
 }
