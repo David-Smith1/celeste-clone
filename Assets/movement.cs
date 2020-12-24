@@ -10,9 +10,23 @@ public class movement : MonoBehaviour
     public float jumpForce = 10;
     public float slideSpeed = 3;
     public float wallJumpLerp = 10;
+    public float dashSpeed = 20;
+    public float superDashSpeed = 25;
 
     public bool wallGrab;
     public bool wallJumped;
+    public bool wallSlide;
+    public bool usedDash;
+
+
+    //add box collider for just the head, sides
+    //add circle collider for the feet
+
+    // change rb collision detection from discrete to continuous
+
+    // create physics material 2d, can adjust friction and bouncyness, SET FRICTION TO 0. ADD IT TO BOX COLLIDER OF SPRITE OBJECT
+
+    //FIX COLLIDER PROBLEM
 
     // Start is called before the first frame update
     void Start()
@@ -26,53 +40,193 @@ public class movement : MonoBehaviour
     {
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
+        float xRaw = Input.GetAxisRaw("Horizontal");
+        float yRaw = Input.GetAxisRaw("Vertical");
         Vector2 dir = new Vector2(x, y);
 
         Walk(dir);
 
-        wallGrab = coll.onWall && Input.GetKey(KeyCode.LeftShift);
+        // wallGrab Trigger
+        if (coll.onWall && Input.GetKey(KeyCode.LeftShift))
+        {
+            wallGrab = true;
+        }
 
+        // wallGrab ending 
+        if (Input.GetKeyUp(KeyCode.LeftShift) || !coll.onWall)
+        {
+            wallGrab = false;
+            wallSlide = false;
+        }
+
+        // wallGrab
         if (wallGrab)
         {
             rb.gravityScale = 0;
-            float speedModifier = y > -4.0 ? .5f : 1;
-            rb.velocity = new Vector2(rb.velocity.x, y * (speed * speedModifier));
+            float speedModifier = y > 0 ? .3f : .5f;
+            rb.velocity = new Vector2(rb.velocity.x, y * (speed * speedModifier)); 
+            wallSlide = false;
         }
         else
         {
-            rb.gravityScale = 2.5f;
+            rb.gravityScale = 2.5f; // if not wallgrabbing gravity is normal
         }
 
 
+        // trigger for wallSlide
+       // if (coll.onWall && !coll.onGround && x != 0 && !wallGrab)
+        //{
+          //  wallSlide = true;
+          //  WallSlide();
+        //}
 
-        if (coll.onWall && !coll.onGround && !wallGrab && rb.velocity.y <= 0)
+        //if (!coll.onWall || coll.onGround || wallGrab) // can't add || x = 0 condition because the private void makes x = 0?? I think
+        //{
+         //   wallSlide = false;
+        //}
+
+
+        // jump else statement is walljump
+        if (Input.GetKeyDown(KeyCode.Space) && coll.onGround)
         {
-            WallSlide();
+            Jump(Vector2.up, false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && coll.onWall && !coll.onGround)
         {
+            WallJump();
 
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.velocity += Vector2.up * jumpForce;
         }
+
+        // trigger for dash
+        if (Input.GetKeyDown(KeyCode.C) && !usedDash)
+        {
+            if (xRaw != 0 || yRaw != 0)
+              Dash(xRaw, yRaw);
+        }
+
+        // personal mechanic
+
+        if (Input.GetKeyDown(KeyCode.X) && wallGrab)
+        {
+            if (xRaw != 0 || yRaw != 0)
+              SuperDash(xRaw);
+        }
+
+        if (coll.onGround)
+        {
+            wallJumped = false;
+            wallSlide = false;
+            usedDash = false;
+        }
+
+    }
+
+
+    private void SuperDash(float x)
+    {
+        rb.velocity = Vector2.zero;
+        Vector2 dir = new Vector2(x, 0);
+
+        rb.velocity += dir.normalized * superDashSpeed;
+
+        StartCoroutine(SuperDashWait());
+
+    }
+
+    IEnumerator SuperDashWait()
+    {
+        rb.gravityScale = 0;
+        GetComponent<BetterJump>().enabled = false;
+        wallJumped = true;
+        
+
+        yield return new WaitUntil(() => coll.onWall = true);
+
+        rb.gravityScale = 2.5f;
+        GetComponent<BetterJump>().enabled = true;
+        wallJumped = false;
+        
+    }
+
+    private void Dash(float x, float y)
+    {
+        // commetn out for now // usedDash = true;
+
+        rb.velocity = Vector2.zero;
+        Vector2 dir = new Vector2(x, y);
+
+        rb.velocity += dir.normalized * dashSpeed;
+        StartCoroutine(DashWait());
+    }
+
+    //IEnumerator pauses actions and enforces time contstraints
+
+    IEnumerator DashWait()
+    {
+        rb.gravityScale = 0;
+        GetComponent<BetterJump>().enabled = false;
+        wallJumped = true;
+       
+
+        yield return new WaitForSeconds(.3f);
+
+        rb.gravityScale = 2.5f;
+        GetComponent<BetterJump>().enabled = true;
+        wallJumped = false;
+       
     }
 
     private void Walk(Vector2 dir)
     {
-        rb.velocity = (new Vector2(dir.x * speed, rb.velocity.y));
+
+        if (!wallJumped)
+        {
+            rb.velocity = new Vector2(dir.x * speed, rb.velocity.y);
+        }
+        else
+        {
+            rb.velocity = Vector2.Lerp(rb.velocity, (new Vector2(dir.x * speed, rb.velocity.y)), wallJumpLerp * Time.deltaTime);
+        }
+    }
+
+    private void WallJump()
+    {
+        StopCoroutine(DisableMovement(0));
+        StartCoroutine(DisableMovement(.2f));
+
+        Vector2 wallJumpAngle = coll.onRightWall ? Vector2.left : Vector2.right;
+
+        Jump((Vector2.up / 1.5f + wallJumpAngle / 1.5f), true); // Vector.up / 1.5 + wallJumpAngle sets the angle of "up" diagonal.
+
+        wallJumped = true;
+    }
+
+    IEnumerator DisableMovement(float time)
+    {
+        // canMove = false;
+        yield return new WaitForSeconds(time);
+        // canMove = true;
+    }
+
+
+    private void Jump(Vector2 dir, bool wall)
+    {
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rb.velocity += dir * jumpForce;  // this is adding jumpForce to vectordir.UP if walljumped
+        wallJumped = false;
     }
 
     private void WallSlide()
     {
 
+        bool pushingWall = false;
         if ((rb.velocity.x > 0 && coll.onRightWall) || (rb.velocity.x < 0 && coll.onLeftWall))
         {
-            rb.velocity = new Vector2(0, -slideSpeed);
+            pushingWall = true;
         }
-        else
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y);
-        }
+        float push = pushingWall ? 0 : rb.velocity.x;
+
+        rb.velocity = new Vector2(push, -slideSpeed);
     }
 }
