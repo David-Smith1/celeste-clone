@@ -16,6 +16,7 @@ public class movement : MonoBehaviour
     public bool wallGrab;
     public bool wallJumped;
     public bool wallSlide;
+ HEAD
     public bool usedDash;
 
 
@@ -27,6 +28,8 @@ public class movement : MonoBehaviour
     // create physics material 2d, can adjust friction and bouncyness, SET FRICTION TO 0. ADD IT TO BOX COLLIDER OF SPRITE OBJECT
 
     //FIX COLLIDER PROBLEM
+
+b764f1e961a863119de9f9b167efdc564be01518
 
     // Start is called before the first frame update
     void Start()
@@ -46,6 +49,7 @@ public class movement : MonoBehaviour
 
         Walk(dir);
 
+<<<<<<< HEAD
         // wallGrab Trigger
         if (coll.onWall && Input.GetKey(KeyCode.LeftShift))
         {
@@ -65,6 +69,24 @@ public class movement : MonoBehaviour
             rb.gravityScale = 0;
             float speedModifier = y > 0 ? .3f : .5f;
             rb.velocity = new Vector2(rb.velocity.x, y * (speed * speedModifier)); 
+=======
+        if (coll.onWall && Input.GetKey(KeyCode.LeftShift))
+        {
+          wallGrab = true;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift || !coll.onWall)
+        {
+          wallGrab = false;
+          wallSlide = false;
+        }
+        
+// wallGrab
+        if (wallGrab)
+        {
+            rb.gravityScale = 0;
+            float speedModifier = y > -4.0 ? .5f : 1;
+            rb.velocity = new Vector2(rb.velocity.x, y * (speed * speedModifier));
+>>>>>>> b764f1e961a863119de9f9b167efdc564be01518
             wallSlide = false;
         }
         else
@@ -73,6 +95,7 @@ public class movement : MonoBehaviour
         }
 
 
+<<<<<<< HEAD
         // trigger for wallSlide
        // if (coll.onWall && !coll.onGround && x != 0 && !wallGrab)
         //{
@@ -120,6 +143,35 @@ public class movement : MonoBehaviour
             usedDash = false;
         }
 
+=======
+// trigger for wallSlide
+        if(coll.onWall && !coll.onGround)
+        {
+            if (x != 0 && !wallGrab) 
+            {
+                wallSlide = true;
+                WallSlide();
+            }
+        }
+        
+// wallJump
+        if (Input.GetKeyDown(KeyCode.Space) && coll.onWall && !coll.onGround)
+        {
+            rb.velocity = new Vector2(wallJumpLerp, jumpForce);
+        }
+        
+// jump
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (coll.onGround)
+              rb.velocity = new Vector2(rb.velocity.x, 0);
+              rb.velocity += Vector2.up * jumpForce;
+            
+            if (coll.onWall && !coll.onGround)
+              WallJump();
+        }
+        
+>>>>>>> b764f1e961a863119de9f9b167efdc564be01518
     }
 
 
@@ -136,6 +188,7 @@ public class movement : MonoBehaviour
 
     IEnumerator SuperDashWait()
     {
+<<<<<<< HEAD
         rb.gravityScale = 0;
         GetComponent<BetterJump>().enabled = false;
         wallJumped = true;
@@ -187,7 +240,29 @@ public class movement : MonoBehaviour
         else
         {
             rb.velocity = Vector2.Lerp(rb.velocity, (new Vector2(dir.x * speed, rb.velocity.y)), wallJumpLerp * Time.deltaTime);
+=======
+    
+        bool pushingWall = false;
+        if((rb.velocity.x > 0 && coll.onRightWall) || (rb.velocity.x < 0 && coll.onLeftWall))
+        {
+            pushingWall = true;
+>>>>>>> b764f1e961a863119de9f9b167efdc564be01518
         }
+        float push = pushingWall ? 0 : rb.velocity.x;
+        
+        rb.velocity = new Vector2(push, -slideSpeed);
+    }
+    
+    private void WallJump()
+    {
+      
+       Vector2 wallJumpAngle = coll.onRightWall ? Vector2.left : Vector2.right;
+       
+    
+    
+    
+    
+    
     }
 
     private void WallJump()
