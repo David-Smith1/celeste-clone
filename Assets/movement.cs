@@ -6,12 +6,14 @@ public class movement : MonoBehaviour
 {
     private Collision coll;
     private Rigidbody2D rb;
-    public float speed = 10;
-    public float jumpForce = 10;
+    public float speed = 5;
+    public float jumpForce = 12;
     public float slideSpeed = 3;
-    public float wallJumpLerp = 10;
+    public float wallJumpLerp = 2;
     public float dashSpeed = 20;
     public float superDashSpeed = 25;
+    public float wallJumpSpeed = 20;
+
 
     public bool wallGrab;
     public bool wallJumped;
@@ -57,24 +59,27 @@ public class movement : MonoBehaviour
         if (wallGrab)
         {
             rb.gravityScale = 0;
-            float speedModifier = y > 0 ? .3f : .5f;
-            rb.velocity = new Vector2(rb.velocity.x, y * (speed * speedModifier));
+            float speedModifier = y > 0 ? .2f : .3f;
+            rb.velocity = new Vector2(rb.velocity.x, yRaw * (speed * speedModifier));
         }
         else
         {
-            rb.gravityScale = 2.5f; // if not wallgrabbing gravity is normal
+            rb.gravityScale = 3f; // if not wallgrabbing gravity is normal
         }
 
+
+       
+
         // trigger for wallSlide
-       // if (coll.onWall && !coll.onGround && x != 0 && !wallGrab)
+        // if (coll.onWall && !coll.onGround && x != 0 && !wallGrab)
         //{
-          //  wallSlide = true;
-          //  WallSlide();
+        //  wallSlide = true;
+        //  WallSlide();
         //}
 
         //if (!coll.onWall || coll.onGround || wallGrab) // can't add || x = 0 condition because the private void makes x = 0?? I think
         //{
-         //   wallSlide = false;
+        //   wallSlide = false;
         //}
 
 
@@ -99,11 +104,7 @@ public class movement : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.X) && wallGrab)
-        {
-            if (xRaw != 0 || yRaw != 0)
-              SuperDash(xRaw);
-        }
+     
 
         if (coll.onGround)
         {
@@ -135,7 +136,7 @@ public class movement : MonoBehaviour
        
         yield return new WaitForSeconds(.3f);
 
-        rb.gravityScale = 2.5f;
+        rb.gravityScale = 3f;
         GetComponent<BetterJump>().enabled = true;
         wallJumped = false;
        
@@ -152,6 +153,7 @@ public class movement : MonoBehaviour
         {
             rb.velocity = Vector2.Lerp(rb.velocity, (new Vector2(dir.x * speed, rb.velocity.y)), wallJumpLerp * Time.deltaTime);
         }
+    }
     
 
     private void WallJump()
