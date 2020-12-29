@@ -6,6 +6,8 @@ public class movement : MonoBehaviour
 {
     private Collision coll;
     private Rigidbody2D rb;
+    private animation anim;
+
     public float speed = 5;
     public float jumpForce = 7;
     public float slideSpeed = 0.5f;
@@ -20,13 +22,16 @@ public class movement : MonoBehaviour
     public bool usedDash;
 
 
-    
+    public int side = 1;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
         coll = GetComponent<Collision>();
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponentInChildren<animation>();
     }
 
     // Update is called once per frame
@@ -39,6 +44,20 @@ public class movement : MonoBehaviour
         Vector2 dir = new Vector2(x, y);
 
         Walk(dir);
+        anim.SetHorizontalMovement(x, y, rb.velocity.y);
+
+
+        if (x > 0)
+        {
+            side = 1;
+            anim.Flip(side);
+        }
+        if (x < 0)
+        {
+            side = -1;
+            anim.Flip(side);
+        }
+
 
 
         // wallGrab Trigger
@@ -86,6 +105,8 @@ public class movement : MonoBehaviour
         // jump else statement is walljump
         if (Input.GetKeyDown(KeyCode.Space) && coll.onGround)
         {
+            anim.SetTrigger("jump");
+
             Jump(Vector2.up, false);
         }
 
@@ -159,6 +180,13 @@ public class movement : MonoBehaviour
 
     private void WallJump()
     {
+
+        if ((side == 1 && coll.onRightWall) || side == -1 && !coll.onRightWall)
+        {
+            side *= -1;
+            anim.Flip(side);
+        }
+
         StopCoroutine(DisableMovement(0));
         StartCoroutine(DisableMovement(.2f));
 
