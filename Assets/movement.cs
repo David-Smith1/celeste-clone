@@ -7,12 +7,11 @@ public class movement : MonoBehaviour
     private Collision coll;
     private Rigidbody2D rb;
     public float speed = 5;
-    public float jumpForce = 12;
-    public float slideSpeed = 3;
+    public float jumpForce = 7;
+    public float slideSpeed = 0.5f;
     public float wallJumpLerp = 2;
-    public float dashSpeed = 20;
+    public float dashSpeed = 10;
     public float superDashSpeed = 25;
-    public float wallJumpSpeed = 20;
 
 
     public bool wallGrab;
@@ -64,23 +63,23 @@ public class movement : MonoBehaviour
         }
         else
         {
-            rb.gravityScale = 3f; // if not wallgrabbing gravity is normal
+            rb.gravityScale = 2f; // if not wallgrabbing gravity is normal
         }
 
 
        
 
         // trigger for wallSlide
-        // if (coll.onWall && !coll.onGround && x != 0 && !wallGrab)
-        //{
-        //  wallSlide = true;
-        //  WallSlide();
-        //}
+         if (coll.onWall && !coll.onGround && x != 0 && !wallGrab)
+        {
+          wallSlide = true;
+          WallSlide();
+        }
 
-        //if (!coll.onWall || coll.onGround || wallGrab) // can't add || x = 0 condition because the private void makes x = 0?? I think
-        //{
-        //   wallSlide = false;
-        //}
+        if (!coll.onWall || coll.onGround || wallGrab) // can't add || x = 0 condition because the private void makes x = 0?? I think
+        {
+           wallSlide = false;
+        }
 
 
 
@@ -90,7 +89,9 @@ public class movement : MonoBehaviour
             Jump(Vector2.up, false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && coll.onWall && !coll.onGround)
+       
+
+        if (Input.GetKeyDown(KeyCode.Space) && wallSlide)
         {
             WallJump();
 
@@ -136,7 +137,7 @@ public class movement : MonoBehaviour
        
         yield return new WaitForSeconds(.3f);
 
-        rb.gravityScale = 3f;
+        rb.gravityScale = 2f;
         GetComponent<BetterJump>().enabled = true;
         wallJumped = false;
        
@@ -192,6 +193,6 @@ public class movement : MonoBehaviour
         }
         float push = pushingWall ? 0 : rb.velocity.x;
 
-        rb.velocity = new Vector2(push, -slideSpeed);
+        rb.velocity = new Vector2(push, Mathf.Clamp(rb.velocity.y, -slideSpeed, float.MaxValue));
     }
 }
