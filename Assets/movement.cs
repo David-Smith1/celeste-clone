@@ -61,13 +61,13 @@ public class movement : MonoBehaviour
 
 
         // wallGrab Trigger
-        if (coll.onWall && Input.GetKey(KeyCode.LeftShift))
+        if (coll.onWall && Input.GetButtonDown("Fire1"))
         {
             wallGrab = true;
         }
 
         // wallGrab ending 
-        if (Input.GetKeyUp(KeyCode.LeftShift) || !coll.onWall)
+        if (Input.GetButtonUp("Fire1") || !coll.onWall)
         {
             wallGrab = false;
             wallSlide = false;
@@ -103,23 +103,23 @@ public class movement : MonoBehaviour
 
 
         // jump else statement is walljump
-        if (Input.GetKeyDown(KeyCode.Space) && coll.onGround)
+        if (Input.GetButtonDown("Jump") && coll.onGround)
         {
-            anim.SetTrigger("jump");
+            anim.SetTrigger("Jump");
 
             Jump(Vector2.up, false);
         }
 
        
 
-        if (Input.GetKeyDown(KeyCode.Space) && wallSlide)
+        if (Input.GetButtonDown("Jump") && wallSlide)
         {
             WallJump();
 
         }
 
         // trigger for dash
-        if (Input.GetKeyDown(KeyCode.C) && !usedDash)
+        if (Input.GetButton("Fire3") && !usedDash)
         {
             if (xRaw != 0 || yRaw != 0)
               Dash(xRaw, yRaw);

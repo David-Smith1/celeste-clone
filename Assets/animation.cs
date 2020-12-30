@@ -25,7 +25,8 @@ public class animation : MonoBehaviour
         anim.SetBool("onWall", coll.onWall);
         anim.SetBool("onRightWall", coll.onRightWall);
         anim.SetBool("wallGrab", move.wallGrab);
-   
+        anim.SetBool("wallSlide", move.wallSlide);
+
     }
 
     public void SetHorizontalMovement(float x, float y, float yVel)
