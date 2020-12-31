@@ -14,12 +14,18 @@ public class movement : MonoBehaviour
     public float wallJumpLerp = 2;
     public float dashSpeed = 10;
     public float superDashSpeed = 25;
+    public float superJumpTimer = 0f;
+    public float superJumpForce = 8f;
 
 
     public bool wallGrab;
     public bool wallJumped;
     public bool wallSlide;
     public bool usedDash;
+    public bool hasJumped;
+    public bool superJumped;
+    public bool superJumpReady;
+   
 
 
     public int side = 1;
@@ -61,24 +67,27 @@ public class movement : MonoBehaviour
 
 
         // wallGrab Trigger
+
         if (coll.onWall && Input.GetButtonDown("Fire1"))
         {
             wallGrab = true;
         }
 
         // wallGrab ending 
-        if (Input.GetButtonUp("Fire1") || !coll.onWall)
+        if (Input.GetButtonUp("Fire1") || Input.GetButtonDown("Jump") || !coll.onWall)
         {
             wallGrab = false;
             wallSlide = false;
         }
 
-        // wallGrab
+
+
+            // wallGrab
         if (wallGrab)
         {
-            rb.gravityScale = 0;
-            float speedModifier = y > 0 ? .2f : .3f;
-            rb.velocity = new Vector2(rb.velocity.x, yRaw * (speed * speedModifier));
+           rb.gravityScale = 0;
+           float speedModifier = y > 0 ? .2f : .3f;
+           rb.velocity = new Vector2(0, yRaw * (speed * speedModifier));
         }
         else
         {
@@ -103,14 +112,25 @@ public class movement : MonoBehaviour
 
 
         // jump else statement is walljump
-        if (Input.GetButtonDown("Jump") && coll.onGround)
+        if (Input.GetButtonDown("Jump") && superJumpReady)
         {
-            anim.SetTrigger("Jump");
-
-            Jump(Vector2.up, false);
+            SuperJump();
         }
 
-       
+
+
+        // super jumps
+        if (Input.GetButtonDown("Jump") && coll.onGround && !superJumpReady)
+        {
+            anim.SetTrigger("Jump");
+            Jump(Vector2.up, false);
+            hasJumped = true;
+        }
+        else if (Input.GetButtonUp("Jump"))
+        {
+            anim.ResetTrigger("Jump");
+        }
+
 
         if (Input.GetButtonDown("Jump") && wallSlide)
         {
@@ -135,7 +155,36 @@ public class movement : MonoBehaviour
             usedDash = false;
         }
 
+        // checks ground touch and super jump ready
+        if (coll.onGround && hasJumped && rb.velocity.y <= 2)
+        {
+            LandingSuperJump1();
+        }
+
+
     }
+
+
+    private void LandingSuperJump1()
+    {
+        superJumpTimer += Time.deltaTime;
+        if (superJumpTimer <= .3f)
+        {
+            superJumpReady = true;
+        } else
+        {
+            superJumpReady = false;
+        }
+
+    }
+
+    private void SuperJump()
+    {
+        superJumped = true;
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rb.velocity += Vector2.up * superJumpForce;
+    }
+
 
 
     private void Dash(float x, float y)
@@ -208,7 +257,8 @@ public class movement : MonoBehaviour
     private void Jump(Vector2 dir, bool wall)
     {
         rb.velocity = new Vector2(rb.velocity.x, 0);
-        rb.velocity += dir * jumpForce; 
+        rb.velocity += dir * jumpForce;
+        
     }
 
     private void WallSlide()

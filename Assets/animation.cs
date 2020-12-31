@@ -41,10 +41,15 @@ public class animation : MonoBehaviour
         anim.SetTrigger(trigger);
     }
 
+    public void ResetTrigger(string trigger)
+    {
+        anim.ResetTrigger(trigger);
+    }
+
     public void Flip(int side)
     {
 
-        if (move.wallGrab || move.wallSlide)
+        if (move.wallSlide)
         {
             if (side == -1 && sr.flipX)
                 return;
@@ -52,6 +57,19 @@ public class animation : MonoBehaviour
             if (side == 1 && !sr.flipX)
             {
                 return;
+            }
+        }
+        
+        if (move.wallGrab)
+        {
+            if (coll.onLeftWall)
+            {
+                side = -1;
+            }
+
+            if (coll.onRightWall)
+            {
+                side = 1;
             }
         }
 
