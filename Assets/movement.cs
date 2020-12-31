@@ -22,8 +22,7 @@ public class movement : MonoBehaviour
     public bool wallJumped;
     public bool wallSlide;
     public bool usedDash;
-    public bool hasJumped;
-    public bool superJumped;
+    public bool usedSuperJump;
     public bool superJumpReady;
    
 
@@ -38,6 +37,7 @@ public class movement : MonoBehaviour
         coll = GetComponent<Collision>();
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<animation>();
+
     }
 
     // Update is called once per frame
@@ -82,7 +82,7 @@ public class movement : MonoBehaviour
 
 
 
-            // wallGrab
+         // wallGrab
         if (wallGrab)
         {
            rb.gravityScale = 0;
@@ -111,24 +111,27 @@ public class movement : MonoBehaviour
 
 
 
-        // jump else statement is walljump
+        // superjump
         if (Input.GetButtonDown("Jump") && superJumpReady)
         {
+            usedSuperJump = true;
             SuperJump();
+            
         }
 
 
 
-        // super jumps
+        // jump else statement is walljump
         if (Input.GetButtonDown("Jump") && coll.onGround && !superJumpReady)
         {
             anim.SetTrigger("Jump");
             Jump(Vector2.up, false);
-            hasJumped = true;
+            superJumpTimer = 0f;
         }
         else if (Input.GetButtonUp("Jump"))
         {
             anim.ResetTrigger("Jump");
+           
         }
 
 
@@ -153,36 +156,34 @@ public class movement : MonoBehaviour
             wallJumped = false;
             wallSlide = false;
             usedDash = false;
+            superJumpTimer += Time.deltaTime;
+
+        }
+
+        if (rb.velocity.y <= 0)
+        {
+            usedSuperJump = false;
         }
 
         // checks ground touch and super jump ready
-        if (coll.onGround && hasJumped && rb.velocity.y <= 2)
-        {
-            LandingSuperJump1();
-        }
-
-
-    }
-
-
-    private void LandingSuperJump1()
-    {
-        superJumpTimer += Time.deltaTime;
-        if (superJumpTimer <= .3f)
+        if (superJumpTimer <= .2f && coll.onGround)
         {
             superJumpReady = true;
-        } else
+        }
+        else
         {
             superJumpReady = false;
         }
+
 
     }
 
     private void SuperJump()
     {
-        superJumped = true;
+
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += Vector2.up * superJumpForce;
+        
     }
 
 

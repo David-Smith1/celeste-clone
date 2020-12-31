@@ -26,6 +26,7 @@ public class animation : MonoBehaviour
         anim.SetBool("onRightWall", coll.onRightWall);
         anim.SetBool("wallGrab", move.wallGrab);
         anim.SetBool("wallSlide", move.wallSlide);
+        anim.SetBool("usedSuperJump", move.usedSuperJump);
 
     }
 
