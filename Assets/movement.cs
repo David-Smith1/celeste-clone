@@ -24,6 +24,7 @@ public class movement : MonoBehaviour
     public bool usedDash;
     public bool usedSuperJump;
     public bool superJumpReady;
+    public bool hasJumped;
    
 
 
@@ -112,7 +113,7 @@ public class movement : MonoBehaviour
 
 
         // superjump
-        if (Input.GetButtonDown("Jump") && superJumpReady)
+        if (Input.GetButtonDown("Jump") && superJumpReady && hasJumped)
         {
             usedSuperJump = true;
             SuperJump();
@@ -166,7 +167,7 @@ public class movement : MonoBehaviour
         }
 
         // checks ground touch and super jump ready
-        if (superJumpTimer <= .2f && coll.onGround)
+        if (superJumpTimer <= .2f && coll.onGround && hasJumped)
         {
             superJumpReady = true;
         }
@@ -183,6 +184,7 @@ public class movement : MonoBehaviour
 
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += Vector2.up * superJumpForce;
+        hasJumped = false;
         
     }
 
@@ -259,6 +261,7 @@ public class movement : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += dir * jumpForce;
+        hasJumped = true;
         
     }
 
