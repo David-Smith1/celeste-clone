@@ -27,6 +27,9 @@ public class animation : MonoBehaviour
         anim.SetBool("wallGrab", move.wallGrab);
         anim.SetBool("wallSlide", move.wallSlide);
         anim.SetBool("usedSuperJump", move.usedSuperJump);
+        anim.SetBool("attack1", move.attack1);
+        anim.SetBool("attack2", move.attack2);
+        anim.SetBool("slide", move.slide);
 
     }
 

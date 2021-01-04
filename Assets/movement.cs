@@ -25,6 +25,10 @@ public class movement : MonoBehaviour
     public bool usedSuperJump;
     public bool superJumpReady;
     public bool hasJumped;
+    public bool attack1;
+    public bool attack2;
+    public bool attack3;
+    public bool slide;
    
 
 
@@ -93,6 +97,14 @@ public class movement : MonoBehaviour
         else
         {
             rb.gravityScale = 2f; // if not wallgrabbing gravity is normal
+        }
+
+        if (coll.onGround && (x > 2 || x < -2) && y < 0)
+        {
+            slide = true;
+        } else
+        {
+            slide = false;
         }
 
 
@@ -176,6 +188,15 @@ public class movement : MonoBehaviour
             superJumpReady = false;
         }
 
+        // trigger for attack
+        if (Input.GetButtonDown("Fire2"))
+        {
+            Attack1();
+            
+        } 
+
+
+
 
     }
 
@@ -186,6 +207,52 @@ public class movement : MonoBehaviour
         rb.velocity += Vector2.up * superJumpForce;
         hasJumped = false;
         
+    }
+
+    private void Attack1()
+    {
+
+
+        StartCoroutine(AttackWait());
+    }
+
+    IEnumerator AttackWait()
+    {
+        
+        attack1 = true;
+
+        yield return new WaitForSeconds(.4f);
+        if (Input.GetButton("Fire2"))
+        {
+            StartCoroutine(Attack2Wait());
+        }
+        attack1 = false;
+
+    }
+
+    IEnumerator Attack2Wait()
+    {
+
+        attack2 = true;
+
+        yield return new WaitForSeconds(.4f);
+        if (Input.GetButton("Fire2"))
+        {
+            StartCoroutine(Attack3Wait());
+        }
+        attack2 = false;
+
+    }
+
+    IEnumerator Attack3Wait()
+    {
+
+        attack3 = true;
+
+        yield return new WaitForSeconds(.4f);
+       
+        attack3 = false;
+
     }
 
 
@@ -200,6 +267,7 @@ public class movement : MonoBehaviour
         rb.velocity += dir.normalized * dashSpeed;
         StartCoroutine(DashWait());
     }
+
 
 
     IEnumerator DashWait()
