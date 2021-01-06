@@ -29,6 +29,7 @@ public class movement : MonoBehaviour
     public bool attack2;
     public bool attack3;
     public bool slide;
+    public bool nearDoor;
    
 
 
@@ -148,7 +149,7 @@ public class movement : MonoBehaviour
         }
 
 
-        if (Input.GetButtonDown("Jump") && wallSlide)
+        if (Input.GetButtonDown("Jump") && coll.onWall)
         {
             WallJump();
 
@@ -194,6 +195,7 @@ public class movement : MonoBehaviour
             Attack1();
             
         } 
+
 
 
 
