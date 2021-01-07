@@ -10,9 +10,9 @@ public class Controller : MonoBehaviour
     Transform carDoor;
 
     Rigidbody2D rb, carRb;
-
     public bool inCar;
     public static bool nearDoor;
+    
 
     public float carSpeed = 10f;
     float dir;
@@ -57,8 +57,6 @@ public class Controller : MonoBehaviour
             
 
         }
-
-
 
     }
 
