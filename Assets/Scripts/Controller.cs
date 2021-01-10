@@ -1,23 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Controller : MonoBehaviour
 {
     [SerializeField]
-    GameObject blake, car, blakeInCar;
+    GameObject blake, car, blakeInCar, trianglebutton;
 
-    Transform carDoor;
+    Transform carDoor, TriggerFight;
 
     Rigidbody2D rb, carRb;
     public bool inCar;
     public static bool nearDoor;
-    
+    public static bool nearCutlerDoor;
+    public static bool fightStart;
+    public AudioSource town;
+
+
 
     public float carSpeed = 10f;
     float dir;
     public float carTimer = 0f;
 
+    Vector3 pos;
 
     // Start is called before the first frame update
     void Start()
@@ -25,12 +31,25 @@ public class Controller : MonoBehaviour
         rb = blake.GetComponent<Rigidbody2D>();
         carRb = car.GetComponent<Rigidbody2D>();
         blakeInCar.gameObject.SetActive(false);
+
+        AudioSource[] allMyAudioSources = GetComponents<AudioSource>();
+        town = allMyAudioSources[0];
+
+
+        Vector3 pos = transform.position;
+        trianglebutton.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         //car enter
+
+        if (fightStart)
+        {
+            town.Stop();
+        }
+
         if (nearDoor && Input.GetButtonDown("Fire4"))
         {
             inCar = true;
@@ -60,6 +79,31 @@ public class Controller : MonoBehaviour
             
 
         }
+
+        if (nearCutlerDoor)
+        {
+            //display ENTER??
+            trianglebutton.SetActive(true);
+            pos = new Vector3(blake.transform.position.x - .06f, blake.transform.position.y + .6f, 0);
+            trianglebutton.transform.position = pos;
+
+            if (Input.GetButton("Fire4"))
+            {
+                blake.gameObject.SetActive(false);
+                trianglebutton.SetActive(false);
+                //code to change to cutler store scene
+
+                SceneManager.LoadScene("CutlerStore");
+
+
+            }
+        }
+
+        if (!nearCutlerDoor)
+        {
+            trianglebutton.SetActive(false);
+        }
+
 
     }
 

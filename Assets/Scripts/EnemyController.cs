@@ -30,10 +30,11 @@ public class EnemyController : MonoBehaviour
     private float _timePassed;
 
     public bool fired;
-
+    public bool playedSound;
     public bool canJump;
+    public bool fireBig;
 
-
+    public AudioSource banter1src, banter2src, banter3src, lasersrc, battlemusic1;
 
 
     // Start is called before the first frame update
@@ -41,11 +42,19 @@ public class EnemyController : MonoBehaviour
     {
          enemyRb = hehYouAgain.GetComponent<Rigidbody2D>();
 
+        AudioSource[] allMyAudioSources = GetComponents<AudioSource>();
+        banter1src = allMyAudioSources[0];
+        banter2src = allMyAudioSources[1];
+        banter3src = allMyAudioSources[2];
+        lasersrc = allMyAudioSources[3];
+        battlemusic1 = allMyAudioSources[4];
        
+
 
         float randomDistance = Random.Range(-3f, 3f);
         positionDisplacement = new Vector2(randomDistance, 0);
         positionOrigin = hehYouAgain.transform.position;
+
 
 
     }
@@ -57,8 +66,17 @@ public class EnemyController : MonoBehaviour
     
         if (fightStart)
         {
-            timer += Time.deltaTime;
-            shootTimer += Time.deltaTime;
+          timer += Time.deltaTime;
+          shootTimer += Time.deltaTime;
+    
+
+            if (!banter1src.isPlaying && !playedSound)
+            {
+                banter1src.Play();
+                playedSound = true;
+                StartCoroutine(WaitTime());
+               
+            }
 
             if (timer > 2.5)
             {
@@ -68,7 +86,7 @@ public class EnemyController : MonoBehaviour
 
 
             //enemyjump
-            if (timer > waitingTime && counter <= 4 && canJump)
+            if (timer > waitingTime && counter <= 4 && canJump && !fireBig)
             {
                 enemyRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 timer = 0;
@@ -80,7 +98,7 @@ public class EnemyController : MonoBehaviour
                 }
             }
             //enemywalk
-            if (!canJump)
+            if (!canJump && !fireBig)
             {
                 _timePassed += Time.deltaTime;
                 hehYouAgain.transform.position = Vector3.Lerp(positionOrigin, positionOrigin + positionDisplacement,
@@ -93,31 +111,33 @@ public class EnemyController : MonoBehaviour
             }
 
             //enemy attack
-            if (shootTimer > 3)
+
+            if (shootTimer > 3 && counter > 1 && counter <= 4 && !fireBig)
             {
                 Fire();
                 shootTimer = 0;
+                banter2src.Play();
+            }
+
+            if (shootTimer > 3 && !fireBig)
+            {
+                shootTimer = 0;
+               
+                    Fire();
             }
 
             //enemysuper attack
-            if (timer > waitingTime && counter > 4)
+            if (timer > waitingTime -.1f && counter > 4)
             {
                 FireBig();
                 counter = 0;
                 timer = 0;
+                
             }
 
 
         }
 
-        
-
-      
-
-
-
-   
-       
 
     }
 
@@ -130,7 +150,32 @@ public class EnemyController : MonoBehaviour
     
     private void FireBig()
     {
-      Instantiate(bigbulletPrefab, firePoint.position, firePoint.rotation);
-    }    
+        fireBig = true;
+        StartCoroutine(ChargeTime());
+        
+    }
+
+    IEnumerator ChargeTime()
+    {
+        banter3src.Play();
+        lasersrc.Play();
+        yield return new WaitForSeconds(4f);
+        lasersrc.Stop();
+        Instantiate(bigbulletPrefab, firePoint.position, firePoint.rotation);
+        fireBig = false;
+        shootTimer = 0;
+
+
+
+    }
+
+    IEnumerator WaitTime()
+    {
+        
+        yield return new WaitForSeconds(2.9f);
+        battlemusic1.Play();
+
+
+    }
 
 }
