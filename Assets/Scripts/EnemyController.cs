@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public GameObject blake, hehYouAgain, bulletPrefab;
+    public GameObject blake, hehYouAgain, bulletPrefab, bigbulletPrefab;
  
     Transform triggerFight;
     public Transform firePoint;
@@ -73,6 +73,11 @@ public class EnemyController : MonoBehaviour
                 enemyRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 timer = 0;
                 counter += 1;
+
+                if (counter == 2 && enemyRb.velocity.y < 0)
+                {
+                    Fire();
+                }
             }
             //enemywalk
             if (!canJump)
@@ -97,7 +102,7 @@ public class EnemyController : MonoBehaviour
             //enemysuper attack
             if (timer > waitingTime && counter > 4)
             {
-                //FireBig();
+                FireBig();
                 counter = 0;
                 timer = 0;
             }
@@ -121,13 +126,11 @@ public class EnemyController : MonoBehaviour
     {
       Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         fired = true;
-        bulletPrefab.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletForce, ForceMode2D.Impulse);
     }
     
-    //private void FireBig()
-    //{
-      //GameObject BIGASSBULLET = Instantiate(projectile, transform.position, transform.rotation);
-      //BIGASSBULLET.GetComponent<Rigidbody2D>().AddForce(-transform.right * (bulletForce + 1), ForceMode2D.Impulse);
-    //}    
+    private void FireBig()
+    {
+      Instantiate(bigbulletPrefab, firePoint.position, firePoint.rotation);
+    }    
 
 }
