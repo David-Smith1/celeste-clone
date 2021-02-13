@@ -25,6 +25,8 @@ public class CutlershopController : MonoBehaviour
         trianglebutton.SetActive(false);
     }
 
+
+
     // Update is called once per frame
     void Update()
     {
