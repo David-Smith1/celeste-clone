@@ -30,7 +30,7 @@ public class movement : MonoBehaviour
     public bool attack3;
     public bool slide;
     public bool nearDoor;
-    public bool hasSuitSword = false;
+    //public bool hasSuitSword = true;
    
 
 
@@ -191,7 +191,7 @@ public class movement : MonoBehaviour
         }
 
         // trigger for attack
-        if (Input.GetButtonDown("Fire2") && hasSuitSword)
+        if (Input.GetButtonDown("Fire2"))
         {
             Attack1();
             
@@ -225,7 +225,7 @@ public class movement : MonoBehaviour
         attack1 = true;
 
         yield return new WaitForSeconds(.4f);
-        if (Input.GetButton("Fire2") && hasSuitSword)
+        if (Input.GetButton("Fire2"))
         {
             StartCoroutine(Attack2Wait());
         }
@@ -239,7 +239,7 @@ public class movement : MonoBehaviour
         attack2 = true;
 
         yield return new WaitForSeconds(.4f);
-        if (Input.GetButton("Fire2") && hasSuitSword)
+        if (Input.GetButton("Fire2"))
         {
             StartCoroutine(Attack3Wait());
         }

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Controller : MonoBehaviour
 {
     [SerializeField]
-    GameObject blake, car, blakeInCar, trianglebutton;
+    GameObject blake, car, blakeInCar, trianglebutton, cutlersStore;
 
     Transform carDoor, TriggerFight;
 
@@ -14,10 +14,12 @@ public class Controller : MonoBehaviour
     public bool inCar;
     public static bool nearDoor;
     public static bool nearCutlerDoor;
+    public static bool visitedShop;
     public static bool fightStart;
     public AudioSource town;
 
-
+    Vector3 startpos;
+    Vector3 shopspawn;
 
     public float carSpeed = 10f;
     float dir;
@@ -38,6 +40,16 @@ public class Controller : MonoBehaviour
 
         Vector3 pos = transform.position;
         trianglebutton.SetActive(false);
+
+        startpos = blake.transform.position;
+        shopspawn = new Vector3(cutlersStore.transform.position.x - 1, -5, 0);
+
+        if (visitedShop)
+        {
+            startpos = shopspawn;
+            blake.transform.position = shopspawn;
+
+        }
     }
 
     // Update is called once per frame
@@ -92,7 +104,7 @@ public class Controller : MonoBehaviour
                 blake.gameObject.SetActive(false);
                 trianglebutton.SetActive(false);
                 //code to change to cutler store scene
-
+              
                 SceneManager.LoadScene("CutlerStore");
 
 
