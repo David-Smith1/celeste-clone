@@ -66,6 +66,7 @@ public class EnemyController : MonoBehaviour
         if (hehYouAgain == null)
         {
             fightStart = false;
+            battlemusic1.Stop();
         }
       
     

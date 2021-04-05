@@ -15,8 +15,17 @@ public class health : MonoBehaviour
        blakehealth = 100f;
     }
 
-    // Update is called once per frame
-    void OnTriggerEnter2D(Collider2D coll)
+
+    void Update()
+    {
+        if (blake == null)
+        {
+            
+        }
+    }
+
+        // Update is called once per frame
+        void OnTriggerEnter2D(Collider2D coll)
     {
         if (coll.gameObject.name == "bullet(Clone)")
         {
