@@ -33,6 +33,7 @@ public class EnemyController : MonoBehaviour
     public bool playedSound;
     public bool canJump;
     public bool fireBig;
+    public float enemyHealth = 100;
 
     public AudioSource banter1src, banter2src, banter3src, lasersrc, battlemusic1;
 
@@ -134,14 +135,28 @@ public class EnemyController : MonoBehaviour
                 timer = 0;
                 
             }
-
-
         }
+
+
+        
 
 
     }
 
-    
+    void OnTriggerEnter2D(Collider2D coll)
+    {
+        if (coll.gameObject.name == "hitbox")
+        {
+            enemyHealth -= 15;
+        }
+        if (enemyHealth <= 0)
+        {
+            Destroy(hehYouAgain);
+        }
+
+    }
+
+
     private void Fire()
     {
       Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
