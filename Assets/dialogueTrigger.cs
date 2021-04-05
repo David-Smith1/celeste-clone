@@ -9,6 +9,9 @@ public class dialogueTrigger : MonoBehaviour
 
     public void TriggerDialogue ()
     {
-        FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
+        if (coll.gameObject.name == "bullet(Clone)")
+        {
+            FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
+        }
     }
 }
