@@ -7,7 +7,7 @@ public class texter : MonoBehaviour
 {
     public TextMeshProUGUI textDisplay;
     public string[] sentences;
-    public int index;
+    private int index = 0;
     public float typingSpeed;
 
     void Start()
