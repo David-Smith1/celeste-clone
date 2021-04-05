@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class texter : MonoBehaviour
 {
+    public TextMeshProUGUI textDisplay;
     public string[] sentences;
     public int index;
     public float typingSpeed;
